@@ -91,6 +91,11 @@ class MomentContainer extends React.Component {
                 break;
             case 'weekday':
                 rs = moment(this.state.endDate).weekday();
+                if (rs === 0) { rs = "Chủ nhật"; }
+                else {
+                    rs += 1;
+                    rs = "Thứ " + rs;
+                }
                 break;
             case 'day-in-month':
                 rs = moment(this.state.endDate).daysInMonth();
@@ -108,7 +113,7 @@ class MomentContainer extends React.Component {
     }
 
     getFunctionDisplay = (type) => {
-        this.setState({ textInput: null, startDate: null, unit: null, result: "" })
+        this.setState({ textInput: null, startDate: null, unit: null, result: "", valueChange: "" })
 
         switch (type) {
             case 'subtract':
@@ -157,11 +162,18 @@ class MomentContainer extends React.Component {
                     endDate={this.state.endDate}
                     onChange={this.handleChange}
                     dateFormat="dd/MM/yyyy"
+                    customInput={
+                        <div>
+                            {this.state.startDate ?
+                                `${moment(this.state.startDate).format('DD/MM/YYYY')} - ${moment(this.state.endDate).format('DD/MM/YYYY')}`
+                                :
+                                moment(this.state.endDate).format('DD/MM/YYYY')}
+                        </div>}
                 />
 
                 {this.state.unit &&
-                    <select value={this.state.unit} onChange={(e) => this.handleChangeUnit(e)} 
-                    className="mdb-select md-form">
+                    <select value={this.state.unit} onChange={(e) => this.handleChangeUnit(e)}
+                        className="mdb-select md-form">
                         {this.state.listUnit.map(item =>
                             <option key={item.value} value={item.value}>{item.name}</option>)}
                     </select>}

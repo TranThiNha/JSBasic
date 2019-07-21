@@ -36,7 +36,12 @@
                 min-width: 150px;
                 border: 1px solid #cccccc;
             }
-            
+        }
+        .react-datepicker-wrapper{
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid #aaaaaa;
+            padding: 4px 20px 4px 20px;
         }
     }
 }
