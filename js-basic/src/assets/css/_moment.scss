@@ -1,0 +1,42 @@
+.moment-container{
+    display: flex;
+    // align-items: center;
+    width: 100%;
+    .right{
+        width: 100%;
+        .title{
+            font-weight: bold;
+            font-size: 18px;
+            padding: 30px;
+        }
+        .main-content{
+            padding: 30px;
+            display: flex;            
+            input{
+                height: 38px;
+                border-radius: 3px;
+                max-width: 300px;
+                margin-left: 30px;
+                :focus{
+                    border: none;
+                }
+            }
+            .btn{
+                height: fit-content;
+                margin-left: 30px;
+            }
+            select{
+                margin-left: 30px;
+                border-radius: 4px;
+                height: 38px;
+            }
+            .result{
+                margin-left: 30px;
+                height: 38px;
+                min-width: 150px;
+                border: 1px solid #cccccc;
+            }
+            
+        }
+    }
+}
