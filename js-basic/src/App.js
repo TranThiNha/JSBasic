@@ -8,6 +8,8 @@ function App() {
     <BrowserRouter>
       <Switch>
         <Route path={routes.moment.path} component={routes.moment.component}/>
+        <Route path={routes.home.path} render={() => window.location.pathname="/moment/subtract"}/>
+
       </Switch>
     </BrowserRouter>
   );
