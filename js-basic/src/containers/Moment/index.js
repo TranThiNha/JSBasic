@@ -1,8 +1,19 @@
 import React from 'react'
 import LeftSidebar from '../../components';
-import DatePicker from "react-datepicker";
 import moment from 'moment';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
+import { DateRangePicker } from "@blueprintjs/datetime";
+
+const WEEK_DAY = [
+    "Chủ nhật",
+    "Thứ 2",
+    "Thứ 3",
+    "Thứ 4",
+    "Thứ 5",
+    "Thứ 6",
+    "Thứ 7",
+
+]
 
 class MomentContainer extends React.Component {
     constructor(props) {
@@ -36,6 +47,7 @@ class MomentContainer extends React.Component {
     }
 
     handleChange = (date) => {
+        console.log('zzz',date)
         if (this.state.startDate) {
             if (moment(date).isAfter(this.state.endDate)) {
                 this.setState({
@@ -91,11 +103,7 @@ class MomentContainer extends React.Component {
                 break;
             case 'weekday':
                 rs = moment(this.state.endDate).weekday();
-                if (rs === 0) { rs = "Chủ nhật"; }
-                else {
-                    rs += 1;
-                    rs = "Thứ " + rs;
-                }
+                rs = WEEK_DAY[rs]
                 break;
             case 'day-in-month':
                 rs = moment(this.state.endDate).daysInMonth();
@@ -156,19 +164,9 @@ class MomentContainer extends React.Component {
         return (<div className="right">
             <div className="title">{this.props.match.params.type}</div>
             <div className="main-content">
-                <DatePicker
-                    selected={this.state.endDate}
-                    startDate={this.state.startDate}
-                    endDate={this.state.endDate}
-                    onChange={this.handleChange}
-                    dateFormat="dd/MM/yyyy"
-                    customInput={
-                        <div>
-                            {this.state.startDate ?
-                                `${moment(this.state.startDate).format('DD/MM/YYYY')} - ${moment(this.state.endDate).format('DD/MM/YYYY')}`
-                                :
-                                moment(this.state.endDate).format('DD/MM/YYYY')}
-                        </div>}
+                <DateRangePicker
+                    value={[this.state.startDate, this.state.endDate]}
+                    onChange={(e) => this.handleChange(e)}
                 />
 
                 {this.state.unit &&
