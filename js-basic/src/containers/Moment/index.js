@@ -2,7 +2,7 @@ import React from 'react'
 import LeftSidebar from '../../components';
 import moment from 'moment';
 import { withRouter } from 'react-router-dom';
-import { DateRangePicker } from "@blueprintjs/datetime";
+import { DateRangePicker, DatePicker } from "@blueprintjs/datetime";
 
 const WEEK_DAY = [
     "Chủ nhật",
@@ -47,25 +47,7 @@ class MomentContainer extends React.Component {
     }
 
     handleChange = (date) => {
-        console.log('zzz',date)
-        if (this.state.startDate) {
-            if (moment(date).isAfter(this.state.endDate)) {
-                this.setState({
-                    startDate: this.state.endDate,
-                    endDate: date
-                })
-            }
-            else {
-                this.setState({
-                    startDate: date
-                })
-            }
-        }
-        else {
-            this.setState({
-                endDate: date
-            });
-        }
+        this.setState({ startDate: date[0], endDate: date[1] })
     }
 
     componentDidMount() {
@@ -109,10 +91,18 @@ class MomentContainer extends React.Component {
                 rs = moment(this.state.endDate).daysInMonth();
                 break;
             case 'get':
+                if (this.state.unit === "day") this.setState({ unit: "date" });
                 rs = moment(this.state.endDate).get(this.state.unit)
+                if (this.state.unit === "month") {
+                    rs++;
+                }
                 break;
             case 'set':
+                if (this.state.unit === "day") this.setState({ unit: "date" });
                 rs = this.state.endDate;
+                if (this.state.unit === "month"){
+                    this.setState({valueChange: this.state.valueChange--})
+                }
                 rs = moment(rs).set(this.state.unit, this.state.valueChange).format('DD/MM/YYYY HH:mm:ss')
                 break;
             default: break;
@@ -164,10 +154,14 @@ class MomentContainer extends React.Component {
         return (<div className="right">
             <div className="title">{this.props.match.params.type}</div>
             <div className="main-content">
-                <DateRangePicker
+                {this.state.startDate ? <DateRangePicker
                     value={[this.state.startDate, this.state.endDate]}
                     onChange={(e) => this.handleChange(e)}
                 />
+                    : <DatePicker
+                        onChange={(e) => this.setState({ endDate: e })}
+                        value={this.state.endDate}
+                    />}
 
                 {this.state.unit &&
                     <select value={this.state.unit} onChange={(e) => this.handleChangeUnit(e)}

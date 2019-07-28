@@ -1,6 +1,5 @@
 .moment-container{
     display: flex;
-    // align-items: center;
     width: 100%;
     .right{
         width: 100%;
@@ -42,6 +41,13 @@
             cursor: pointer;
             border: 1px solid #aaaaaa;
             padding: 4px 20px 4px 20px;
+        }
+
+        .bp3-datepicker-caption{
+            .bp3-icon{
+                right: -14px !important;
+                top: 10px !important;
+            }
         }
     }
 }
