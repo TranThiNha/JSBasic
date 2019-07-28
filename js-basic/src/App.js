@@ -7,9 +7,7 @@ function App() {
   return (
     <BrowserRouter>
       <Switch>
-        <Route path={routes.moment.path} component={routes.moment.component}/>
-        <Route path={routes.home.path} render={() => window.location.pathname="/moment/subtract"}/>
-
+        {Object.values(routes).map(item => <Route key={item.path} path={item.path} component={item.component}/>)}
       </Switch>
     </BrowserRouter>
   );

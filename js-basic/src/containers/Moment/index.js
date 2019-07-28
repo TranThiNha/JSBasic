@@ -101,7 +101,7 @@ class MomentContainer extends React.Component {
                 if (this.state.unit === "day") this.setState({ unit: "date" });
                 rs = this.state.endDate;
                 if (this.state.unit === "month"){
-                    this.setState({valueChange: this.state.valueChange--})
+                    this.setState({valueChange: this.state.valueChange - 1})
                 }
                 rs = moment(rs).set(this.state.unit, this.state.valueChange).format('DD/MM/YYYY HH:mm:ss')
                 break;
