@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import _ from 'lodash'
 
 class Newspaper extends React.Component {
 
@@ -8,6 +9,7 @@ class Newspaper extends React.Component {
         this.state = {
             data: null
         }
+        this.keyword = "thượng viện";
     }
 
     componentDidMount() {
@@ -38,34 +40,48 @@ class Newspaper extends React.Component {
             },
         ).then(rsNewspaper => {
             if (rsNewspaper.data.code === 0) {
-                this.setState({ data: rsNewspaper.data.data }, () => {
-                    this.state.data.forEach((item, index) => {
-                        this.paint(item, index)
-                    })
-                })
+                this.setState({ data: rsNewspaper.data.data })
             }
         })
     }
 
+    setDivAttr = (div, width, height, left, top) => {
+        div.style.width = width + "px";
+        div.style.height = height + "px";
+        div.style.position = "absolute";
+        div.style.backgroundColor = "#f1202020";
+        div.style.top = top + "px";
+        div.style.left = left + "px";
+        div.style.zIndex = 99999;
+    }
+
     paint = (item, index) => {
         let pic = document.getElementById("news");
-        let divColor = document.getElementById(index)
-        divColor.style.width = item.w + "px";
-        divColor.style.height = item.h + "px"
-        divColor.style.position = "absolute";
-        divColor.style.backgroundColor = "#f1202020";
-        divColor.style.top = item.y + pic.offsetTop + "px";
-        divColor.style.left = item.x + "px";
-        divColor.style.zIndex = 99999;
+        let secondWord = this.state.data[index + 1];
+        let divColor = document.createElement('div');
+        divColor.id = index;
+        document.body.appendChild(divColor);
+        if (secondWord.x < item.x) {
+            this.setDivAttr(divColor, item.w, item.h, item.x, item.y + pic.offsetTop)
+
+            let divAfter = document.createElement('div');
+            divAfter.id = index + 1;
+            document.body.appendChild(divAfter);
+            this.setDivAttr(divAfter, secondWord.w, secondWord.h, secondWord.x, secondWord.y + pic.offsetTop)
+        }
+        else {
+            this.setDivAttr(divColor, secondWord.x + secondWord.w - item.x, item.h > secondWord.h ? item.h : secondWord.h, item.x, (item.y < secondWord.y ? item.y : secondWord.y) + pic.offsetTop)
+        }
     }
 
     render() {
         return (
             <div>
                 <img style={{ width: 'auto', height: 'auto', position: "relative" }} id="news" alt="newspaper" src={require('../../assets/media/images/newspaper.jpg')} />
-                {this.state.data && this.state.data.map((item, index) => (
-                    <div id={index} key={index}></div>
-                ))}
+                {this.state.data && this.state.data.map((item, index) => {
+                    let words = item.word + (this.state.data[index + 1] && " " + this.state.data[index + 1].word)
+                    return _.includes(_.toLower(words), _.toLower(this.keyword)) && this.paint(item, index)
+                })}
             </div>
         )
     }
