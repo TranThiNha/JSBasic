@@ -10,10 +10,10 @@ export const routes = {
     },
     moment: {
         path: '/moment/:type',
-        component: MomentContainer
+        component: MomentContainer,
     },
     newspaper: {
         path: '/newspaper',
-        component: Newspaper
+        component: Newspaper,
     }
 }

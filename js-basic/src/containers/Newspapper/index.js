@@ -48,12 +48,13 @@ class Newspaper extends React.Component {
     }
 
     paint = (item, index) => {
+        let pic = document.getElementById("news");
         let divColor = document.getElementById(index)
         divColor.style.width = item.w + "px";
         divColor.style.height = item.h + "px"
         divColor.style.position = "absolute";
         divColor.style.backgroundColor = "#f1202020";
-        divColor.style.top = item.y + "px";
+        divColor.style.top = item.y + pic.offsetTop + "px";
         divColor.style.left = item.x + "px";
         divColor.style.zIndex = 99999;
     }
