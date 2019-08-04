@@ -8,7 +8,7 @@ class Newspaper extends React.Component {
     this.state = {
       data: null
     };
-    this.keyword = "cuộc bầu cử thượng viện";
+    this.keyword = "có thể thông qua";
     this.listWord = this.keyword.split(" ");
     this.arrKeyword = [];
   }
@@ -70,36 +70,29 @@ class Newspaper extends React.Component {
   };
 
   checkKeyword = () => {
-    this.arrKeyword = _.orderBy(this.arrKeyword, "y", "asc");
-    let index = -1;
-    let line = -1;
     let findout = [];
-    this.arrKeyword.forEach(a => {
-      if (a.y + a.h !== line) {
-        this.checkNearly(findout);
-        findout = [];
-        index = -1;
-        line = a.y + a.h;
+    for (let i = 0; i < this.arrKeyword.length; i++) {
+      findout.push(this.arrKeyword[i]);
+      for (let j = i+1; j < this.arrKeyword.length; j++) {
+        if (i === j) {
+          break;
+        }
+        let a = this.arrKeyword[i];
+        let b = this.arrKeyword[j];
+        if (a.y >= b.y + b.h || a.y + a.h <= b.y) {
+          break;
+        }
+        else{
+          findout.push(b)
+        }
       }
-
-      let itemIndex = _.findIndex(
-        this.listWord,
-        o => _.toLower(o) === _.toLower(a.word)
-      );
-      if (index === -1 || itemIndex === 0) {
-        index = itemIndex;
-        findout.push(a);
-      }
-
-      if (itemIndex === index + 1) {
-        index = itemIndex;
-        findout.push(a);
-      }
-    });
+      this.checkNearly(findout);
+      findout = [];
+    }
   };
 
   checkNearly = arr => {
-    //inline
+    arr = _.orderBy(arr, 'x', 'asc')
     let pic = document.getElementById("news");
     if (arr.length === this.listWord.length) {
       for (let index = 0; index < arr.length - 1; index++) {
@@ -128,36 +121,6 @@ class Newspaper extends React.Component {
     div.style.top = top + "px";
     div.style.left = left + "px";
     div.style.zIndex = 99999;
-  };
-
-  paint = (item, index) => {
-    let pic = document.getElementById("news");
-    let secondWord = this.state.data[index + 1];
-    let divColor = document.createElement("div");
-    divColor.id = index;
-    document.body.appendChild(divColor);
-    if (secondWord.x < item.x) {
-      this.setDivAttr(divColor, item.w, item.h, item.x, item.y + pic.offsetTop);
-
-      let divAfter = document.createElement("div");
-      divAfter.id = index + 1;
-      document.body.appendChild(divAfter);
-      this.setDivAttr(
-        divAfter,
-        secondWord.w,
-        secondWord.h,
-        secondWord.x,
-        secondWord.y + pic.offsetTop
-      );
-    } else {
-      this.setDivAttr(
-        divColor,
-        secondWord.x + secondWord.w - item.x,
-        item.h > secondWord.h ? item.h : secondWord.h,
-        item.x,
-        (item.y < secondWord.y ? item.y : secondWord.y) + pic.offsetTop
-      );
-    }
   };
 
   render() {
