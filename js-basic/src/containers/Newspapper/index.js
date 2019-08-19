@@ -6,9 +6,9 @@ class Newspaper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: null
+      data: null,
     };
-    this.keyword = "có thể thông qua";
+    this.keyword = "Thượng viện Nhật Bản";
     this.listWord = this.keyword.split(" ");
     this.arrKeyword = [];
   }
@@ -30,7 +30,7 @@ class Newspaper extends React.Component {
           this.arrKeyword.push(item);
         }
       });
-    this.checkKeyword();
+    this.checkInline();
   };
 
   fetchData = async () => {
@@ -69,21 +69,19 @@ class Newspaper extends React.Component {
       });
   };
 
-  checkKeyword = () => {
+  checkInline = () => {
     let findout = [];
-    for (let i = 0; i < this.arrKeyword.length; i++) {
+    for (let i = 0; i < this.arrKeyword.length - 1; i++) {
       findout.push(this.arrKeyword[i]);
       for (let j = i+1; j < this.arrKeyword.length; j++) {
-        if (i === j) {
-          break;
-        }
         let a = this.arrKeyword[i];
         let b = this.arrKeyword[j];
-        if (a.y >= b.y + b.h || a.y + a.h <= b.y) {
-          break;
-        }
-        else{
-          findout.push(b)
+        const maxDiff = a.h > b.h ? a.h / 2 : b.h / 2;
+      
+        if (!(Math.abs(a.y - b.y)> maxDiff)) {
+          findout.push(b);
+          // _.remove(this.arrKeyword, o => o.x === b.x && o.y === b.y) 
+          // console.log('zzz arrKeyword', this.arrKeyword)
         }
       }
       this.checkNearly(findout);
@@ -92,26 +90,55 @@ class Newspaper extends React.Component {
   };
 
   checkNearly = arr => {
-    arr = _.orderBy(arr, 'x', 'asc')
-    let pic = document.getElementById("news");
-    if (arr.length === this.listWord.length) {
+    arr = _.orderBy(arr, 'x', 'asc');
+    if (arr.length >= this.listWord.length) {
+      let flag = -1;
       for (let index = 0; index < arr.length - 1; index++) {
-        const element = arr[index];
-        if (element.x + 1.5 * element.w < arr[index + 1].x) {
-          return;
+          const element = arr[index];
+          if (_.findIndex(this.listWord, o => o === element.word) === flag + 1){
+            flag++;
+            if (this.listWord.length === 1){
+              this._paint(arr, index);
+            }
+            if (element.x + 1.5 * element.w > arr[index + 1].x) {
+              if (flag === this.listWord.length - 2){
+                this._paint(arr, index+1);
+                flag = -1;
+              }
+          }
+          else flag = -1;
+        }
+        else{
+          flag = -1;
         }
       }
-      let divColor = document.createElement("div");
-      document.body.appendChild(divColor);
-      this.setDivAttr(
-        divColor,
-        arr[arr.length - 1].x + arr[arr.length - 1].w - arr[0].x,
-        arr[0].h,
-        arr[0].x,
-        arr[0].y + pic.offsetTop
-      );
     }
   };
+
+  _paint = (arr, end) => {
+    let pic = document.getElementById("news");
+    let divColor = document.createElement("div");
+    document.body.appendChild(divColor);
+    if (this.listWord.length === 1){
+      this.setDivAttr(
+        divColor,
+        arr[end].w,
+        arr[end].h,
+        arr[end].x,
+        arr[end].y + pic.offsetTop
+      );
+    }
+    else{
+    let start =  end - this.listWord.length + 1;
+    this.setDivAttr(
+      divColor,
+      arr[end].x + arr[end].w - arr[start].x,
+      arr[end].h > arr[start].h ? arr[end].h : arr[start].h,
+      arr[start].x,
+      arr[start].y < arr[end].h ? arr[start].y + pic.offsetTop : arr[end].y + pic.offsetTop
+    );
+    }
+  }
 
   setDivAttr = (div, width, height, left, top) => {
     div.style.width = width + "px";
